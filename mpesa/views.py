@@ -9,7 +9,7 @@ from requests.auth import HTTPBasicAuth
 from decouple import config
 
 def index(request):
-    return render(request, 'index].html')
+    return render(request, 'index.html')
 
 # Define your Django view
 def mpesa_payment(request):
