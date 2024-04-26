@@ -3,7 +3,8 @@ from django.shortcuts import render
 from .momo import PayClass
 
 def index(request):
-    return render(request, 'mtnmo.html')
+    token = PayClass.momotoken()
+    return render(request, 'mtnmo.html', {'token': token})
 
 def pay(request):
     if request.method == 'POST':
@@ -18,3 +19,21 @@ def pay(request):
             return HttpResponse(f"An error occurred: {str(e)}")
     else:
         return render(request, 'pay.html')
+
+def disburse(request):
+    if request.method == 'POST':
+        amount = request.POST.get('amount')
+        currency = request.POST.get('currency')
+        txt_ref = request.POST.get('txt_ref')
+        phone_number = request.POST.get('phone_number')
+        payermessage = request.POST.get('payermessage')
+
+        try:
+            result = PayClass.withdrawmtnmomo(amount, currency, txt_ref, phone_number, payermessage)
+            return render(request, 'disburse.html', {'response': result["response"], 'ref': result["ref"]})
+        except KeyError as e:
+            return HttpResponse(f"Error: Key '{e}' not found in the response.")
+        except Exception as e:
+            return HttpResponse(f"An error occurred: {str(e)}")
+    else:
+        return render(request, 'disburse.html')

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Disburse</title>
+</head>
+<body>
+    <form method="post">
+        {% csrf_token %}
+        <label for="amount">Amount:</label><br>
+        <input type="text" id="amount" name="amount"><br>
+        <label for="currency">Currency:</label><br>
+        <input type="text" id="currency" name="currency"><br>
+        <label for="txt_ref">Reference:</label><br>
+        <input type="text" id="txt_ref" name="txt_ref"><br>
+        <label for="phone_number">Phone Number:</label><br>
+        <input type="text" id="phone_number" name="phone_number"><br>
+        <label for="payermessage">Message:</label><br>
+        <input type="text" id="payermessage" name="payermessage"><br>
+        <p></p>
+        <input type="submit" value="Submit">
+    </form>
+
+    <h3>MoMo Response: {{ response|default:"No request sent" }}</h3>
+    <h3>MoMo Ref: {{ ref|default:"No request sent" }}</h3>
+</body>
+</html>
