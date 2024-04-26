@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from mpesa.views import base
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path('', base, name='home'),
@@ -23,4 +24,6 @@ urlpatterns = [
     path('mpesa/', include('mpesa.urls')),
     path('mtnmo/', include('mtnmo.urls')),
     path('paystack/', include('paystack.urls')),
+
+    path('<path:path>', TemplateView.as_view(template_name='404.html'), name='catch_all_404'),
 ]

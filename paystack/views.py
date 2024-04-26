@@ -9,7 +9,7 @@ def initiate_payment(request):
 
 		pk = config('PAYSTACK_PUBLIC_KEY')
 
-		payment = Payment.objects.create(amount=amount, email=email, user=request.user)
+		payment = Payment.objects.create(amount=amount, email=email) # user=request.user
 		payment.save()
 
 		context = {
@@ -24,13 +24,14 @@ def initiate_payment(request):
 
 
 def verify_payment(request, ref):
-	payment = Payment.objects.get(ref=ref)
-	verified = payment.verify_payment()
+	if request.user.is_authenticated:
+		payment = Payment.objects.get(ref=ref)
+		verified = payment.verify_payment()
 
-	if verified:
-		user_wallet = UserWallet.objects.get(user=request.user)
-		user_wallet.balance += payment.amount
-		user_wallet.save()
-		print(request.user.username, " funded wallet successfully")
-		return render(request, "paystack/success.html")
+		if verified:
+			user_wallet = UserWallet.objects.get(user=request.user)
+			user_wallet.balance += payment.amount
+			user_wallet.save()
+			print(request.user.username, " funded wallet successfully")
+			return render(request, "paystack/success.html")
 	return render(request, "paystack/success.html")
