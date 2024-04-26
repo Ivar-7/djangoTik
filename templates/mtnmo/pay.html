@@ -1,24 +1,25 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<h1>Make a Payment</h1>
-    <form method="POST">
-        {% csrf_token %}
-        <label for="amount">Amount:</label><br>
-        <input type="text" id="amount" name="amount"><br>
-        <!-- <label for="currency">Currency:</label><br>
-        <input type="text" id="currency" name="currency"><br>
-        <label for="txt_ref">Transaction Reference:</label><br>
-        <input type="text" id="txt_ref" name="txt_ref"><br> -->
-        <label for="phone_number">Phone Number:</label><br>
-        <input type="text" id="phone_number" name="phone_number"><br>
-        <!-- <label for="payermessage">Payer Message:</label><br>
-        <input type="text" id="payermessage" name="payermessage"><br> -->
-        <p></p>
-        <input type="submit" value="Submit">
-    </form>
-
-    <h3>MoMo Response: {{ response|default:"No request sent" }}</h3>
-    <h3>MoMo Ref: {{ ref|default:"No request sent" }}</h3>
+<div class="container"></div>
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <h1 class="text-center mt-5">Make a Payment</h1>
+            <form method="post" class="mt-4">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="amount">Amount:</label>
+                    <input type="text" id="amount" name="amount" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone_number">Phone Number:</label>
+                    <input type="text" id="phone_number" name="phone_number" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+            <h3 class="mt-4">MoMo Response: {{ response|default:"No request sent" }}</h3>
+            <h3>MoMo Ref: {{ ref|default:"No request sent" }}</h3>
+        </div>
+    </div>
+</div>
 {% endblock %}

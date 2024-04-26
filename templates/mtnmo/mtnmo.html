@@ -1,8 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<h1>Mtn mobile money works</h1>
-
-    <h3>Token: {{ token }}</h3>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-6 text-center">
+            <h1 class="mt-5">Mtn mobile money works</h1>
+            <h3 class="mt-3">Token: {{ token }}</h3>
+            <a href="/mtnmo/pay/" class="btn btn-primary mt-3">Mtn-Pay</a>
+            <a href="/mtnmo/disburse/" class="btn btn-secondary mt-3">Mtn-Disburse</a>
+        </div>
+    </div>
+</div>
 {% endblock %}

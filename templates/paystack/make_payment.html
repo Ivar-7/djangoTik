@@ -25,6 +25,7 @@
 				email: "{{ payment.email }}",
 				amount: "{{ amount_value }}",
 				ref: ref,
+				channels: ['card', 'mobile_money'],
 				callback: function (response) {
 					window.location.href = "{% url 'verify_payment' payment.ref %}";
 				},
@@ -35,7 +36,6 @@
 			if (Boolean(plan)) {
 				obj.plan - plan;
 			}
-
 			var handler = PaystackPop.setup(obj);
 			handler.openIframe();
 		}
