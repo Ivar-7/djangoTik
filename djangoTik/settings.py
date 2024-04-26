@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'mpesa',
     'mtnmo',
+    'paystack',
 ]
 
 MIDDLEWARE = [
