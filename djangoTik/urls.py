@@ -24,6 +24,7 @@ urlpatterns = [
     path('mpesa/', include('mpesa.urls')),
     path('mtnmo/', include('mtnmo.urls')),
     path('paystack/', include('paystack.urls')),
+    path('stripe/', include('stripe.urls')),
 
     path('<path:path>', TemplateView.as_view(template_name='404.html'), name='catch_all_404'),
 ]
