@@ -87,6 +87,7 @@ class PayClass():
 
     # ============= Action Functions for collections
 
+    @staticmethod
     def momotoken():
         url = ""+str(PayClass.accurl)+"/collection/token/"
 
@@ -102,6 +103,7 @@ class PayClass():
 
         return authorization_token
 
+    @staticmethod
     def momopay(amount, currency, txt_ref, phone_number, payermessage):
         # UUID V4 generator
         uuidgen = str(uuid.uuid4())
