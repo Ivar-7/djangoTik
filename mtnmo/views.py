@@ -3,8 +3,9 @@ from django.shortcuts import render
 from .momo import PayClass
 
 def index(request):
-    token = PayClass.momotoken()
-    return render(request, 'mtnmo.html', {'token': token})
+    # token = PayClass.momotoken()
+    # callPay = PayClass.momopay("100", "EUR", "1234Test", "0968793843", "Donate to charity")
+    return render(request, 'mtnmo/mtnmo.html')
 
 def pay(request):
     if request.method == 'POST':
@@ -18,7 +19,7 @@ def pay(request):
         except Exception as e:
             return HttpResponse(f"An error occurred: {str(e)}")
     else:
-        return render(request, 'pay.html')
+        return render(request, 'mtnmo/pay.html')
 
 def disburse(request):
     if request.method == 'POST':
@@ -36,4 +37,4 @@ def disburse(request):
         except Exception as e:
             return HttpResponse(f"An error occurred: {str(e)}")
     else:
-        return render(request, 'disburse.html')
+        return render(request, 'mtnmo/disburse.html')

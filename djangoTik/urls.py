@@ -15,9 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from mpesa.views import base
 
 urlpatterns = [
+    path('', base, name='home'),
     path('admin/', admin.site.urls),
-    path('', include('mpesa.urls')),
+    path('mpesa/', include('mpesa.urls')),
     path('mtnmo/', include('mtnmo.urls')),
+    path('paystack/', include('paystack.urls')),
 ]

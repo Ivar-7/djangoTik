@@ -8,8 +8,11 @@ import base64
 from requests.auth import HTTPBasicAuth
 from decouple import config
 
+def base(request):
+    return render(request, 'base.html')
+
 def index(request):
-    return render(request, 'index.html')
+    return render(request, 'mpesa/index.html')
 
 # Define your Django view
 def mpesa_payment(request):
@@ -64,7 +67,7 @@ def mpesa_payment(request):
     else:
         # Handle GET requests
         # Render a form or any other content you want to display for GET requests
-        return render(request, 'mpesa_payment_form.html')
+        return render(request, 'mpesa/mpesa_payment_form.html')
 
 # Logging
 from django.http import JsonResponse

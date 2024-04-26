@@ -1,7 +1,8 @@
 import requests
+from decouple import config
 
 class Paystack:
-	PAYSTACK_SK = 'PAYSTACK_SECRET_KEY'
+	PAYSTACK_SK = config('PAYSTACK_SECRET_KEY')
 	base_url = "https://api.paystack.co/"
 
 	def verify_payment(self, ref, *args, **kwargs):
