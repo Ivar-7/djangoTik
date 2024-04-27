@@ -3,8 +3,6 @@ from django.shortcuts import render
 from .momo import PayClass
 
 def index(request):
-    # token = PayClass.momotoken()
-    # callPay = PayClass.momopay("100", "EUR", "1234Test", "0968793843", "Donate to charity")
     return render(request, 'mtnmo/mtnmo.html')
 
 def pay(request):
@@ -12,8 +10,9 @@ def pay(request):
         phonenumber = str(request.POST.get('phone_number'))
         amount = str(request.POST.get('amount'))
         try:
-            callPay = PayClass.momopay(amount, "EUR", "1234Test", phonenumber, "Donate to charity")
-            return render(request, 'pay.html', {'response': callPay["response"], 'ref': callPay["ref"]})
+            pay_instance = PayClass()
+            call_pay = pay_instance.momopay(amount, "EUR", "1234Test", phonenumber, "Donate to charity")
+            return render(request, 'mtnmo/pay.html', {'response': call_pay["response"], 'ref': call_pay["ref"]})
         except KeyError as e:
             return HttpResponse(f"Error: Key '{e}' not found in the response.")
         except Exception as e:
@@ -30,8 +29,9 @@ def disburse(request):
         payermessage = request.POST.get('payermessage')
 
         try:
-            result = PayClass.withdrawmtnmomo(amount, currency, txt_ref, phone_number, payermessage)
-            return render(request, 'disburse.html', {'response': result["response"], 'ref': result["ref"]})
+            pay_instance = PayClass()
+            result = pay_instance.withdraw_mtn_momo(amount, currency, txt_ref, phone_number, payermessage)
+            return render(request, 'mtnmo/disburse.html', {'response': result["response"], 'ref': result["ref"]})
         except KeyError as e:
             return HttpResponse(f"Error: Key '{e}' not found in the response.")
         except Exception as e:
