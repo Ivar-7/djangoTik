@@ -38,10 +38,14 @@ def create_checkout_session(request):
                 mode='payment',
                 line_items=[
                     {
-                        'name': 'ticket',
+                        'price_data': {
+                            'currency': 'usd',
+                            'product_data': {
+                                'name': 'ticket',
+                            },
+                            'unit_amount': 500,
+                        },
                         'quantity': 1,
-                        'currency': 'usd',
-                        'amount': '5000',
                     }
                 ]
             )
