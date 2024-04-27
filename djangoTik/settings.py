@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'mpesa',
     'mtnmo',
     'paystack',
-    'stripe',
+    'stripe_pay',
 ]
 
 MIDDLEWARE = [

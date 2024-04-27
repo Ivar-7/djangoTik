@@ -1,0 +1,38 @@
+{% extends "base.html" %} {% block content %}
+
+  <script defer src="https://use.fontawesome.com/releases/v6.4.0/js/all.js"></script>
+  <script src="https://js.stripe.com/v3/"></script>
+
+  <section class="section">
+    <div class="container">
+      <button class="button is-primary" id="submitBtn">Purchase!</button>
+    </div>
+  </section>
+
+  <script>
+    console.log("Sanity check!");
+
+  // Get Stripe publishable key
+  fetch("/stripe-pay/config/")
+  .then((result) => { return result.json(); })
+  .then((data) => {
+    // Initialize Stripe.js
+    const stripe = Stripe(data.publicKey);
+
+    // Event handler
+    document.querySelector("#submitBtn").addEventListener("click", () => {
+      // Get Checkout Session ID
+      fetch("/stripe-pay/create-checkout-session/")
+      .then((result) => { return result.json(); })
+      .then((data) => {
+        console.log(data);
+        // Redirect to Stripe Checkout
+        return stripe.redirectToCheckout({sessionId: data.sessionId})
+      })
+      .then((res) => {
+        console.log(res);
+      });
+    });
+  });
+  </script>
+{% endblock %}

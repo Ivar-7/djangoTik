@@ -4,54 +4,47 @@ from django.views import View
 from decouple import config
 import stripe
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-
-stripe.api_key = config('STRIPE_SECRET_KEY')
 
 class HomePageView(View):
-    template_name = 'stripe/home.html'
+    template_name = 'stripe_pay/home.html'
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)
 
-class SuccessView(View):
-    template_name = 'stripe/success.html'
-    def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
-
-class CancelView(View):
-    template_name = 'stripe/cancel.html'
-    def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
-
-class StripeConfigView(View):
-    def get(self, request, *args, **kwargs):
+@csrf_exempt
+def stripe_config(request):
+    if request.method == 'GET':
         stripe_config = {'publicKey': config('STRIPE_PUBLISHABLE_KEY')}
         return JsonResponse(stripe_config, safe=False)
 
-class CreateCheckoutSessionView(View):
-    @method_decorator(csrf_exempt)
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        domain_url = 'http://localhost:8000/'
+@csrf_exempt
+def create_checkout_session(request):
+    if request.method == 'GET':
+        domain_url = 'http://localhost:8000/stripe-pay/'
         stripe.api_key = config('STRIPE_SECRET_KEY')
         try:
+            # Create new Checkout Session for the order
+            # Other optional params include:
+            # [billing_address_collection] - to display billing address details on the page
+            # [customer] - if you have an existing Stripe Customer ID
+            # [payment_intent_data] - capture the payment later
+            # [customer_email] - prefill the email input in the form
+            # For full details see https://stripe.com/docs/api/checkout/sessions/create
+
+            # ?session_id={CHECKOUT_SESSION_ID} means the redirect will have the session ID set as a query param
             checkout_session = stripe.checkout.Session.create(
                 success_url=domain_url + 'success?session_id={CHECKOUT_SESSION_ID}',
-                cancel_url=domain_url + 'cancel/',
+                cancel_url=domain_url + 'cancelled/',
                 payment_method_types=['card'],
                 mode='payment',
                 line_items=[
                     {
-                        'name': 'T-shirt',
+                        'name': 'ticket',
                         'quantity': 1,
                         'currency': 'usd',
-                        'amount': '2000',
+                        'amount': '5000',
                     }
                 ]
             )
-            print(checkout_session)
             return JsonResponse({'sessionId': checkout_session['id']})
         except Exception as e:
             return JsonResponse({'error': str(e)})
