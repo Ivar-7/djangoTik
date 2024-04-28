@@ -26,5 +26,5 @@ urlpatterns = [
     path('paystack/', include('paystack.urls')),
     path('stripe-pay/', include('stripe_pay.urls')),
 
-    # path('<path:path>', TemplateView.as_view(template_name='404.html'), name='catch_all_404'),
+    path('<path:path>', TemplateView.as_view(template_name='404.html'), name='catch_all_404'),
 ]
