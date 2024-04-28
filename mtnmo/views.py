@@ -47,14 +47,14 @@ def disbursement(request):
         disbur = Disbursement()
         amount = request.POST.get('amount')
         phone_number = request.POST.get('phone_number')
-        # currency = request.POST.get('currency')
-        # txt_ref = request.POST.get('txt_ref')
-        # payermessage = request.POST.get('payermessage')
+        external_id = request.POST.get('external_id')
+        payermessage = request.POST.get('payermessage')
 
         try:
             result = disbur.transfer(
-                amount, phone_number, external_id="123456789")
-            # transfer_status_res = disbur.getTransactionStatus(result['ref'])
+                amount, phone_number, external_id, payermessage)
+            transfer_status_res = disbur.getTransactionStatus(result['ref'])
+            print(transfer_status_res)
             # create_transaction(transfer_status_res)
             return render(request, 'mtnmo/disbursement.html', {"result": result})
         except KeyError as e:
