@@ -41,9 +41,7 @@ class Collection:
             'Ocp-Apim-Subscription-Key': self.collections_primary_key
         }
         response = requests.request("POST",self.url, headers=self.headers, data=payload)
-        print(response)
         response = response.json()
-        print(response)
 
         # Auto-generate when in test mode
         if self.environment_mode == "sandbox":
@@ -92,11 +90,11 @@ class Collection:
         return context
 
     def getTransactionStatus(self, txn):
-        url = f"{self.base_url}/collection/v1_0/requesttopay/{txn}"
+        url = ""+str(self.base_url)+"/collection/v1_0/requesttopay/"+str(txn)
         payload = {}
         headers = {
             'Ocp-Apim-Subscription-Key': self.collections_primary_key,
-        'Authorization': f"Bearer {self.authToken()['access_token']}",
+            'Authorization': "Bearer "+str(self.authToken()["access_token"]),
             'X-Target-Environment': self.environment_mode,
         }
         response = requests.request("GET", url, headers=headers, data=payload)
@@ -105,11 +103,11 @@ class Collection:
 
     # Check momo collections balance
     def getBalance(self):
-        url = f"{self.base_url}/collection/v1_0/account/balance"
+        url = ""+str(self.base_url)+"/collection/v1_0/account/balance"
         payload = {}
         headers = {
             'Ocp-Apim-Subscription-Key': self.collections_primary_key,
-            'Authorization':  f"Bearer {self.authToken()['access_token']}",
+            'Authorization':  "Bearer "+str(self.authToken()["access_token"]),
             'X-Target-Environment': self.environment_mode,
         }
         response = requests.request("GET", url, headers=headers, data=payload)

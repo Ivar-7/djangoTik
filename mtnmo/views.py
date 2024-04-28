@@ -8,11 +8,10 @@ def index(request):
 def collection(request):
     coll = Collection()
     response = coll.requestToPay(amount="600", phone_number="0966456787", external_id="123456789")
-    status_resposne = coll.getTransactionStatus(response['transaction_ref'])
-    if status_resposne['status'] == "SUCCESS":
-        print("success")
+    status_resposne = coll.getTransactionStatus(response['ref'])
+    print(status_resposne)
 
-    return status_resposne['status']
+    return render(request, 'mtnmo/pay.html', {"response": response})
 
 def disbursement(request):
     disbur = Disbursement()

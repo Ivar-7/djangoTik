@@ -18,7 +18,8 @@
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
             <h3 class="mt-4">MoMo Response: {{ response|default:"No request sent" }}</h3>
-            <h3>MoMo Ref: {{ ref|default:"No request sent" }}</h3>
+            <h3 class="mt-4">MoMo status code: {{ response.status_code|default:"No request sent" }}</h3>
+            <h3>MoMo Ref: {{ response.ref|default:"No request sent" }}</h3>
         </div>
     </div>
 </div>
