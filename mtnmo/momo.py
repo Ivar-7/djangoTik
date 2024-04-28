@@ -118,15 +118,13 @@ class PayClass():
         json_respon = response.json()
         return json_respon
 
-    def withdrawmtnmomo(amount, phone_number, payermessage):
-        uuidgen = str(uuid.uuid4())
-        url = ""+str(PayClass.accurl)+"/disbursement/v1_0/transfer"
-        payload = json.dumps({"amount": amount, "currency": "EUR", "externalId": "1234567", "payee": {
-                             "partyIdType": "MSISDN", "partyId": phone_number}, "payerMessage": payermessage, "payeeNote": payermessage})
-        headers = {'X-Reference-Id': uuidgen, 'X-Target-Environment': PayClass.environment_mode, 'Ocp-Apim-Subscription-Key': PayClass.disbursements_subkey,
-                   'Content-Type': 'application/json', 'Authorization': "Bearer "+str(PayClass.momotokendisbursement()["access_token"])}
-        response = requests.request("POST", url, headers=headers, data=payload)
-        context = {"response": response.status_code, "ref": uuidgen}
+    def withdrawmtnmomo(amount,currency,txt_ref,phone_number,payermessage):
+        uuidgen=str(uuid.uuid4())
+        url=""+str(PayClass.accurl)+"/disbursement/v1_0/transfer"
+        payload=json.dumps({"amount":amount,"currency":currency,"externalId":txt_ref,"payee":{"partyIdType":"MSISDN","partyId":phone_number},"payerMessage":payermessage,"payeeNote":payermessage})
+        headers={'X-Reference-Id':uuidgen,'X-Target-Environment':PayClass.environment_mode,'Ocp-Apim-Subscription-Key':PayClass.disbursements_subkey,'Content-Type':'application/json','Authorization':"Bearer "+str(PayClass.momotokendisbursement()["access_token"])}
+        response=requests.request("POST",url,headers=headers,data=payload)
+        context={"response":response.status_code,"ref":uuidgen}
         return context
 
     def checkwithdrawstatus(txt_ref):
