@@ -74,39 +74,33 @@ class Disbursement:
         json_respon = response.json()
         return json_respon
 
-    def transfer(self, amount, phone_number, external_id,payermessage='',payermessageNone=''):
+    def transfer(self, amount, currency, phone_number, external_id, payermessage):
+        uuidgen = str(uuid.uuid4())
         url = ""+str(self.base_url)+"/disbursement/v1_0/transfer"
         payload = json.dumps({
-            "amount": str(amount),
-            "currency": 'EUR',
-            "externalId": str(external_id),
+            "amount": amount,
+            "currency": currency,
+            "externalId": external_id,
             "payee": {
                 "partyIdType": "MSISDN",
                 "partyId": phone_number
             },
             "payerMessage": payermessage,
-            "payeeNote": payermessageNone
+            "payeeNote": payermessage
         })
         
         headers = {
-            'X-Reference-Id': str(uuid.uuid4()),
+            'X-Reference-Id': uuidgen,
             'X-Target-Environment': self.environment_mode,
             # 'X-Callback-Url': self.callback_url,
             'Ocp-Apim-Subscription-Key': self.disbursements_primary_key,
             'Content-Type': 'application/json',
-            'Authorization':  "Bearer " + str(self.authToken()["access_token"])
+            'Authorization':  "Bearer "+str(self.authToken()["access_token"])
             }
-        # proxies = {
-        #     "http": 'QUOTAGUARDSTATIC_URL',
-        #     "https": 'QUOTAGUARDSTATIC_URL'
-        #     }
         response = requests.request("POST", url, headers=headers, data=payload)
-
-        if response.status_code == 200:
-            return response.json()
-        else:
-            raise Exception(f"Failed to fetch data from API. Status code: {response.status_code}, Error: {response.text}")
-    
+        print(response)
+        context = {"response": response.status_code, "ref": uuidgen}
+        return context
 
     def getTransactionStatus(self,txn_ref):
 
