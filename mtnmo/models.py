@@ -1,6 +1,6 @@
 from django.db import models
 
-class Transaction(models.Model):
+class Collection(models.Model):
     financial_transaction_id = models.CharField(max_length=100)
     external_id = models.CharField(max_length=100, blank=True, null=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -9,4 +9,17 @@ class Transaction(models.Model):
     party_id = models.CharField(max_length=50)
     payer_message = models.TextField(blank=True, null=True)
     payee_note = models.TextField(blank=True, null=True)
+    status = models.CharField(max_length=50)
+
+class Disbursement(models.Model):
+    response = models.IntegerField()
+    ref = models.UUIDField()
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    currency = models.CharField(max_length=3)
+    financial_transaction_id = models.CharField(max_length=100)
+    external_id = models.CharField(max_length=100)
+    party_id_type = models.CharField(max_length=50)
+    party_id = models.CharField(max_length=50)
+    payer_message = models.CharField(max_length=100)
+    payee_note = models.CharField(max_length=100)
     status = models.CharField(max_length=50)
