@@ -62,21 +62,3 @@ def disbursement(request):
         except Exception as e:
             return HttpResponse(f"An error occurred: {str(e)}")
     return render(request, 'mtnmo/disbursement.html')
-
-# def disburse(request):
-#     if request.method == 'POST':
-#         amount = request.POST.get('amount')
-#         currency = request.POST.get('currency')
-#         txt_ref = request.POST.get('txt_ref')
-#         phone_number = request.POST.get('phone_number')
-#         payermessage = request.POST.get('payermessage')
-
-#         try:
-#             result = PayClass.withdrawmtnmomo(amount, currency, txt_ref, phone_number, payermessage)
-#             return render(request, 'mtnmo/disbursement.html', {'result': result})
-#         except KeyError as e:
-#             return HttpResponse(f"Error: Key '{e}' not found in the response.")
-#         except Exception as e:
-#             return HttpResponse(f"An error occurred: {str(e)}")
-#     else:
-#         return render(request, 'mtnmo/disbursement.html')
