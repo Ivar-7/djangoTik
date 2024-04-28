@@ -38,7 +38,7 @@ def collection(request):
             return HttpResponse(f"An error occurred: {str(e)}")
     return render(request, 'mtnmo/pay.html')
 
-# def disbursement(request):
+# def disburse(request):
 #     if request.method == 'POST':
 #         disbur = Disbursement()
 #         amount = request.POST.get('amount')
