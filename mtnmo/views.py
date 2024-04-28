@@ -2,6 +2,8 @@ from django.shortcuts import render
 from .collection import Collection
 from .disbursement import Disbursement
 from .models import Transaction
+# from django.http import HttpResponse
+# from .momo import PayClass
 
 def index(request):
     return render(request, 'mtnmo/mtnmo.html')
@@ -21,15 +23,45 @@ def create_transaction(status_response):
     transaction.save()
 
 def collection(request):
-    coll = Collection()
-    response = coll.requestToPay(amount="600", phone_number="0966456787", external_id="123456789")
-    status_response = coll.getTransactionStatus(response['ref'])
-    create_transaction(status_response)
-    return render(request, 'mtnmo/pay.html', {"response": response})
+    if request.method == 'POST':
+        coll = Collection()
+        amount = request.POST.get('amount')
+        phone_number = request.POST.get('phone_number')
+        response = coll.requestToPay(amount, phone_number, external_id="123456789")
+
+        status_response = coll.getTransactionStatus(response['ref'])
+        create_transaction(status_response)
+        return render(request, 'mtnmo/pay.html', {"response": response})
+    return render(request, 'mtnmo/pay.html')
 
 def disbursement(request):
-    disbur = Disbursement()
-    response = disbur.transfer(amount="600", phone_number="0966456787", external_id="123456789")
-    transfer_status_res = disbur.getTransactionStatus(response['ref'])
-    create_transaction(transfer_status_res)
-    return render(request, 'mtnmo/disburse.html', {"response": response})
+    if request.method == 'POST':
+        disbur = Disbursement()
+        amount = request.POST.get('amount')
+        phone_number = request.POST.get('phone_number')
+        external_id = request.POST.get('external_id')
+        response = disbur.transfer(amount, phone_number, external_id)
+        
+        # transfer_status_res = disbur.getTransactionStatus(response['ref'])
+        # create_transaction(transfer_status_res)
+        return render(request, 'mtnmo/disburse.html', {"response": response})
+    return render(request, 'mtnmo/disburse.html')
+
+# def disburse(request):
+#     if request.method == 'POST':
+#         amount = request.POST.get('amount')
+#         currency = request.POST.get('currency')
+#         txt_ref = request.POST.get('txt_ref')
+#         phone_number = request.POST.get('phone_number')
+#         payermessage = request.POST.get('payermessage')
+
+#         try:
+#             pay_instance = PayClass()
+#             result = pay_instance.withdraw_mtn_momo(amount, currency, txt_ref, phone_number, payermessage)
+#             return render(request, 'mtnmo/disburse.html', {'response': result["response"], 'ref': result["ref"]})
+#         except KeyError as e:
+#             return HttpResponse(f"Error: Key '{e}' not found in the response.")
+#         except Exception as e:
+#             return HttpResponse(f"An error occurred: {str(e)}")
+#     else:
+#         return render(request, 'mtnmo/disburse.html')

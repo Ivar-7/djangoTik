@@ -91,7 +91,7 @@ class Disbursement:
         headers = {
             'X-Reference-Id': str(uuid.uuid4()),
             'X-Target-Environment': self.environment_mode,
-            'X-Callback-Url': self.callback_url,
+            # 'X-Callback-Url': self.callback_url,
             'Ocp-Apim-Subscription-Key': self.disbursements_primary_key,
             'Content-Type': 'application/json',
             'Authorization':  "Bearer " + str(self.authToken()["access_token"])
