@@ -13,7 +13,7 @@ class Collection:
         self.environment_mode = 'sandbox'
         self.callback_url = 'https://mydomain.com'
         self.base_url = 'https://proxy.momoapi.mtn.com'
-        
+
         if self.environment_mode == "sandbox":
             self.base_url = "https://sandbox.momodeveloper.mtn.com"
 
@@ -31,24 +31,28 @@ class Collection:
             'Content-Type': 'application/json',
             'Ocp-Apim-Subscription-Key': self.collections_primary_key
         }
-        response = requests.request("POST",self.url, headers=self.headers, data=payload)
+        response = requests.request(
+            "POST", self.url, headers=self.headers, data=payload)
 
         # Create API key
-        self.url = ""+str(self.base_url)+"/v1_0/apiuser/"+str(self.collections_apiuser)+"/apikey"
+        self.url = ""+str(self.base_url)+"/v1_0/apiuser/" + \
+            str(self.collections_apiuser)+"/apikey"
         payload = {}
         self.headers = {
             'Ocp-Apim-Subscription-Key': self.collections_primary_key
         }
-        response = requests.request("POST",self.url, headers=self.headers, data=payload)
+        response = requests.request(
+            "POST", self.url, headers=self.headers, data=payload)
         response = response.json()
 
         # Auto-generate when in test mode
         if self.environment_mode == "sandbox":
             self.api_key_collections = str(response["apiKey"])
- 
+
         # Create basic key for Collections
         self.username, self.password = self.collections_apiuser, self.api_key_collections
-        self.basic_authorisation_collections = str(encode(self.username, self.password))
+        self.basic_authorisation_collections = str(
+            encode(self.username, self.password))
 
     def authToken(self):
         url = ""+str(self.base_url)+"/collection/token/"
@@ -57,11 +61,11 @@ class Collection:
             'Ocp-Apim-Subscription-Key': self.collections_primary_key,
             'Authorization': str(self.basic_authorisation_collections)
         }
-        response = requests.request("POST",url,headers=headers,data=payload)
+        response = requests.request("POST", url, headers=headers, data=payload)
         authorization_token = response.json()
         return authorization_token
 
-    def requestToPay(self, amount, phone_number, external_id,payernote="SPARCO", payermessage="SPARCOPAY", currency="EUR"):
+    def requestToPay(self, amount, phone_number, external_id, payernote="SPARCO", payermessage="SPARCOPAY", currency="EUR"):
         uuidgen = str(uuid.uuid4())
         url = ""+str(self.base_url)+"/collection/v1_0/requesttopay"
         payload = json.dumps({
@@ -84,8 +88,7 @@ class Collection:
             'Authorization': "Bearer "+str(self.authToken()["access_token"])
         }
         response = requests.request("POST", url, headers=headers, data=payload)
-
-        context = {"status_code": response.status_code,"ref": uuidgen}
+        context = {"status_code": response.status_code, "ref": uuidgen}
         return context
 
     def getTransactionStatus(self, txn):

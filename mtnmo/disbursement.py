@@ -13,7 +13,6 @@ class Disbursement:
         self.environment_mode = 'sandbox'
         self.callback_url = 'https://mydomain.com'
         self.base_url = 'https://proxy.momoapi.mtn.com'
-        
 
         if self.environment_mode == "sandbox":
             self.base_url = "https://sandbox.momodeveloper.mtn.com"
@@ -32,15 +31,18 @@ class Disbursement:
             'Content-Type': 'application/json',
             'Ocp-Apim-Subscription-Key': self.disbursements_primary_key
         }
-        response = requests.request("POST",self.url, headers=self.headers, data=payload)
+        response = requests.request(
+            "POST", self.url, headers=self.headers, data=payload)
 
         # Create API key
-        self.url = ""+str(self.base_url)+"/v1_0/apiuser/"+str(self.disbursements_apiuser)+"/apikey"
+        self.url = ""+str(self.base_url)+"/v1_0/apiuser/" + \
+            str(self.disbursements_apiuser)+"/apikey"
         payload = {}
         self.headers = {
             'Ocp-Apim-Subscription-Key': self.disbursements_primary_key
         }
-        response = requests.request("POST",self.url, headers=self.headers, data=payload)
+        response = requests.request(
+            "POST", self.url, headers=self.headers, data=payload)
         response = response.json()
 
         # Auto-generate when in test mode
@@ -49,7 +51,8 @@ class Disbursement:
 
         # Create basic key for disbursements
         self.username, self.password = self.disbursements_apiuser, self.api_key_disbursements
-        self.basic_authorisation_disbursements = str(encode(self.username, self.password))
+        self.basic_authorisation_disbursements = str(
+            encode(self.username, self.password))
 
     def authToken(self):
         url = ""+str(self.base_url)+"/disbursement/token/"
@@ -58,7 +61,7 @@ class Disbursement:
             'Ocp-Apim-Subscription-Key': self.disbursements_primary_key,
             'Authorization': str(self.basic_authorisation_disbursements)
         }
-        response = requests.request("POST",url,headers=headers,data=payload)
+        response = requests.request("POST", url, headers=headers, data=payload)
         response = response.json()
         return response
 
@@ -74,35 +77,32 @@ class Disbursement:
         json_respon = response.json()
         return json_respon
 
-    def transfer(self, amount, currency, phone_number, external_id, payermessage):
+    def transfer(self, amount, phone_number, external_id, currency="EUR", payernote="SPARCO", payermessage="SPARCOPAY",):
         uuidgen = str(uuid.uuid4())
         url = ""+str(self.base_url)+"/disbursement/v1_0/transfer"
         payload = json.dumps({
-            "amount": amount,
-            "currency": currency,
-            "externalId": external_id,
+            "amount": amount, 
+            "currency": currency, 
+            "externalId": external_id, 
             "payee": {
-                "partyIdType": "MSISDN",
-                "partyId": phone_number
-            },
-            "payerMessage": payermessage,
-            "payeeNote": payermessage
+                    "partyIdType": "MSISDN", 
+                    "partyId": phone_number
+                }, 
+            "payerMessage": payermessage, 
+            "payeeNote": payernote
         })
-        
         headers = {
-            'X-Reference-Id': uuidgen,
-            'X-Target-Environment': self.environment_mode,
-            # 'X-Callback-Url': self.callback_url,
+            'X-Reference-Id': uuidgen, 
+            'X-Target-Environment': self.environment_mode, 
             'Ocp-Apim-Subscription-Key': self.disbursements_primary_key,
-            'Content-Type': 'application/json',
-            'Authorization':  "Bearer "+str(self.authToken()["access_token"])
-            }
+            'Content-Type': 'application/json', 
+            'Authorization': "Bearer "+str(self.authToken()["access_token"])
+        }
         response = requests.request("POST", url, headers=headers, data=payload)
-        print(response)
         context = {"response": response.status_code, "ref": uuidgen}
         return context
 
-    def getTransactionStatus(self,txn_ref):
+    def getTransactionStatus(self, txn_ref):
 
         url = ""+str(self.base_url)+"/disbursement/v1_0/transfer/"+str(txn_ref)
 
