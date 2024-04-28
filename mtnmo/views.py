@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .collection import Collection
 from .disbursement import Disbursement
-from .models import Collection, Disbursement
+from .models import CollectionTransaction, DisbursementTransaction
 from django.http import HttpResponse
 
 
@@ -10,7 +10,7 @@ def index(request):
 
 
 def store_collection(status_response):
-    transaction = Collection(
+    transaction = CollectionTransaction(
         financial_transaction_id=status_response['financialTransactionId'],
         external_id=status_response['externalId'],
         amount=status_response['amount'],
@@ -24,7 +24,7 @@ def store_collection(status_response):
     transaction.save()
 
 def store_disbursement(response_data):
-    disbursement = Disbursement(
+    disbursement = DisbursementTransaction(
         response=response_data['response'],
         ref=response_data['ref'],
         amount=response_data['data']['amount'],
