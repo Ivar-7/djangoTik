@@ -1,40 +1,24 @@
-# from django.http import HttpResponse
 from django.shortcuts import render
-# from .momo import PayClass
+from .collection import Collection
+from .disbursement import Disbursement
 
 def index(request):
     return render(request, 'mtnmo/mtnmo.html')
 
-# def pay(request):
-#     if request.method == 'POST':
-#         phonenumber = str(request.POST.get('phone_number'))
-#         amount = str(request.POST.get('amount'))
-#         try:
-#             pay_instance = PayClass()
-#             call_pay = pay_instance.momopay(amount, "EUR", "1234Test", phonenumber, "Donate to charity")
-#             return render(request, 'mtnmo/pay.html', {'response': call_pay["response"], 'ref': call_pay["ref"]})
-#         except KeyError as e:
-#             return HttpResponse(f"Error: Key '{e}' not found in the response.")
-#         except Exception as e:
-#             return HttpResponse(f"An error occurred: {str(e)}")
-#     else:
-#         return render(request, 'mtnmo/pay.html')
+def collection(request):
+    coll = Collection()
+    response = coll.requestToPay(amount="600", phone_number="0966456787", external_id="123456789")
+    status_resposne = coll.getTransactionStatus(response['transaction_ref'])
+    if status_resposne['status'] == "SUCCESS":
+        print("success")
 
-# def disburse(request):
-#     if request.method == 'POST':
-#         amount = request.POST.get('amount')
-#         currency = request.POST.get('currency')
-#         txt_ref = request.POST.get('txt_ref')
-#         phone_number = request.POST.get('phone_number')
-#         payermessage = request.POST.get('payermessage')
+    return status_resposne['status']
 
-#         try:
-#             pay_instance = PayClass()
-#             result = pay_instance.withdraw_mtn_momo(amount, currency, txt_ref, phone_number, payermessage)
-#             return render(request, 'mtnmo/disburse.html', {'response': result["response"], 'ref': result["ref"]})
-#         except KeyError as e:
-#             return HttpResponse(f"Error: Key '{e}' not found in the response.")
-#         except Exception as e:
-#             return HttpResponse(f"An error occurred: {str(e)}")
-#     else:
-#         return render(request, 'mtnmo/disburse.html')
+def disbursement(request):
+    disbur = Disbursement()
+    response = disbur.transfer(amount="600", phone_number="0966456787", external_id="123456789", payee_note="dd", payer_message="dd", currency="EUR")
+    transfer_status_res = disbur.getTransactionStatus(response['transaction_ref'])
+    if transfer_status_res['status'] == "SUCCESS":
+        print('success')
+
+    return transfer_status_res['status']
