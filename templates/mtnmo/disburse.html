@@ -29,8 +29,10 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
-            <h3 class="mt-4">MoMo Response: {{ response|default:"No request sent" }}</h3>
-            <h3>MoMo Ref: {{ ref|default:"No request sent" }}</h3>
+            {% if response %}
+                <h3 class="mt-4">MoMo Response: {{ response.status_code }}</h3>
+                <h3>MoMo Ref: {{ response.ref }}</h3>
+            {% endif %}
         </div>
     </div>
 </div>
