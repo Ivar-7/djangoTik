@@ -22,8 +22,8 @@
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
             {% if response %}
-                <h3 class="mt-4">MoMo Response: {{ response.status_code }}</h3>
-                <h3>MoMo Ref: {{ response.ref }}</h3>
+                <h3 class="mt-4">MoMo Response: {{ response.status_code|default:"Not available" }}</h3>
+                <h3>MoMo Ref: {{ response.ref|default:"Not available" }}</h3>
             {% endif %}
         </div>
     </div>
