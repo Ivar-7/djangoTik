@@ -77,7 +77,7 @@ class Disbursement:
         json_respon = response.json()
         return json_respon
 
-    def transfer(self, amount, phone_number, external_id, currency="EUR", payernote="SPARCO", payermessage="SPARCOPAY",):
+    def transfer(self, amount, phone_number, payermessage, external_id, currency="EUR", payernote="SPARCO"):
         uuidgen = str(uuid.uuid4())
         url = ""+str(self.base_url)+"/disbursement/v1_0/transfer"
         payload = json.dumps({
