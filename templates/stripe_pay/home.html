@@ -27,17 +27,26 @@
     // Initialize Stripe.js
     const stripe = Stripe(data.publicKey);
 
-    // Event handler
-    document.querySelector("#submitBtn").addEventListener("click", () => {
+    document.querySelector("#submitBtn").addEventListener("click", (event) => {
       event.preventDefault();
       let productName = document.getElementById('productName').value;
       let amount = document.getElementById('amount').value;
+      let csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
       // Get Checkout Session ID
-      fetch(`/stripe-pay/create-checkout-session/?productName=${productName}&amount=${amount}`)
+      fetch(`/stripe-pay/create-checkout-session/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-CSRFToken': csrfToken
+        },
+        body: new URLSearchParams({
+          'productName': productName,
+          'amount': amount
+        })
+      })
       .then((result) => { return result.json(); })
       .then((data) => {
-        // console.log(data);
         // Redirect to Stripe Checkout
         return stripe.redirectToCheckout({sessionId: data.sessionId})
       })
