@@ -19,7 +19,7 @@ def stripe_config(request):
 @csrf_exempt
 def create_checkout_session(request):
     if request.method == 'GET':
-        domain_url = 'http://localhost:8000/stripe-pay/'
+        domain_url = 'http://localhost:8000/stripe_pay/'
         stripe.api_key = config('STRIPE_SECRET_KEY')
         try:
             # Create new Checkout Session for the order
@@ -32,7 +32,8 @@ def create_checkout_session(request):
 
             # ?session_id={CHECKOUT_SESSION_ID} means the redirect will have the session ID set as a query param
             checkout_session = stripe.checkout.Session.create(
-                success_url=domain_url + 'success?session_id={CHECKOUT_SESSION_ID}',
+                # success_url=domain_url + 'success?session_id={CHECKOUT_SESSION_ID}',
+                success_url=domain_url + 'success/',
                 cancel_url=domain_url + 'cancelled/',
                 payment_method_types=['card'],
                 mode='payment',
@@ -41,9 +42,9 @@ def create_checkout_session(request):
                         'price_data': {
                             'currency': 'usd',
                             'product_data': {
-                                'name': 'ticket',
+                                'name': 'tick',
                             },
-                            'unit_amount': 500,
+                            'unit_amount': 5000,
                         },
                         'quantity': 1,
                     }
@@ -52,3 +53,9 @@ def create_checkout_session(request):
             return JsonResponse({'sessionId': checkout_session['id']})
         except Exception as e:
             return JsonResponse({'error': str(e)})
+
+def success(request):
+    return render(request, 'stripe_pay/success.html')
+
+def cancelled(request):
+    return render(request, 'stripe_pay/cancelled.html')

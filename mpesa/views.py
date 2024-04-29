@@ -8,9 +8,6 @@ import base64
 from requests.auth import HTTPBasicAuth
 from decouple import config
 
-def base(request):
-    return render(request, 'base.html')
-
 def index(request):
     return render(request, 'mpesa/index.html')
 
