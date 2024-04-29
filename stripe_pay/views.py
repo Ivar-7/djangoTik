@@ -1,4 +1,5 @@
 import json
+import time
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views import View
@@ -60,6 +61,7 @@ def cancelled(request):
 @csrf_exempt
 def stripe_webhook(request):
     stripe.api_key = config('STRIPE_SECRET_KEY')
+    time.sleep(15)
     payload = request.body
     # signature_header = request.META['HTTP_STRIPE_SIGNATURE']
     event = None
@@ -79,6 +81,7 @@ def stripe_webhook(request):
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
         print(session)
+        time.sleep(15)
         StripeTransaction.objects.create(
             product_name=session['display_items'][0]['custom']['product_name'],
             amount=session['display_items'][0]['amount']
