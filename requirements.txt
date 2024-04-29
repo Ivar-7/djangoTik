@@ -3,7 +3,9 @@ basicauth==1.0.0
 certifi==2024.2.2
 charset-normalizer==3.3.2
 Django==5.0.4
+gunicorn==22.0.0
 idna==3.7
+packaging==24.0
 psycopg2-binary==2.9.9
 python-decouple==3.8
 requests==2.31.0
