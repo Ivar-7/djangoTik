@@ -2,3 +2,6 @@
 __pycache__/
 .env
 *.log
+bin
+lib
+pyvenv.cfg
