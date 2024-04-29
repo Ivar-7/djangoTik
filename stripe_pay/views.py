@@ -21,6 +21,8 @@ def create_checkout_session(request):
     if request.method == 'GET':
         domain_url = 'http://localhost:8000/stripe-pay/'
         stripe.api_key = config('STRIPE_SECRET_KEY')
+        product_name = request.GET.get('productName')
+        amount = int(request.GET.get('amount'))
         try:
             checkout_session = stripe.checkout.Session.create(
                 # success_url=domain_url + 'success?session_id={CHECKOUT_SESSION_ID}',
@@ -33,9 +35,9 @@ def create_checkout_session(request):
                         'price_data': {
                             'currency': 'usd',
                             'product_data': {
-                                'name': 'ticket',
+                                'name': product_name,
                             },
-                            'unit_amount': 500,
+                            'unit_amount': amount,
                         },
                         'quantity': 1,
                     }
@@ -44,6 +46,8 @@ def create_checkout_session(request):
             return JsonResponse({'sessionId': checkout_session['id']})
         except Exception as e:
             return JsonResponse({'error': str(e)})
+    else:
+        return render(request, 'stripe_pay/home.html')
 
 def success(request):
     return render(request, 'stripe_pay/success.html')
