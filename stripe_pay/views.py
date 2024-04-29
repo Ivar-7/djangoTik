@@ -45,8 +45,8 @@ def create_checkout_session(request):
         except Exception as e:
             return JsonResponse({'error': str(e)})
 
-# def success(request):
-#     return render(request, 'stripe_pay/success.html')
+def success(request):
+    return render(request, 'stripe_pay/success.html')
 
-# def cancelled(request):
-#     return render(request, 'stripe_pay/cancelled.html')
+def cancelled(request):
+    return render(request, 'stripe_pay/cancelled.html')
