@@ -16,13 +16,13 @@ def stripe_config(request):
         stripe_config = {'publicKey': config('STRIPE_PUBLISHABLE_KEY')}
         return JsonResponse(stripe_config, safe=False)
 
-@csrf_exempt
+# @csrf_exempt
 def create_checkout_session(request):
     if request.method == 'GET':
         domain_url = 'http://localhost:8000/stripe-pay/'
         stripe.api_key = config('STRIPE_SECRET_KEY')
         product_name = request.GET.get('productName')
-        amount = int(request.GET.get('amount'))
+        amount = int(request.GET.get('amount')) * 100
         try:
             checkout_session = stripe.checkout.Session.create(
                 # success_url=domain_url + 'success?session_id={CHECKOUT_SESSION_ID}',

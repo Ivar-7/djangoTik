@@ -3,7 +3,7 @@
   <script defer src="https://use.fontawesome.com/releases/v6.4.0/js/all.js"></script>
   <script src="https://js.stripe.com/v3/"></script>
 
-  <form class="mt-4">
+  <form class="mt-4" method="POST">
     {% csrf_token %}
     <div class="form-group">
       <label for="productName">Name:</label>
@@ -13,7 +13,7 @@
         <label for="amount">Amount:</label>
         <input type="text" id="amount" name="amount" class="form-control" required>
     </div>
-    <button class="button btn-primary" id="submitBtn">Purchase!</button>
+    <button class="button btn-primary" id="submitBtn" type="submit">Purchase!</button>
   </form>
   
 
