@@ -21,7 +21,7 @@ def stripe_config(request):
 # @csrf_exempt
 def create_checkout_session(request):
     if request.method == 'POST':
-        domain_url = 'http://localhost:8000/stripe-pay/'
+        domain_url = config('STRIPE_DOMAIN_URL')
         stripe.api_key = config('STRIPE_SECRET_KEY')
         product_name = request.POST.get('productName')
         amount = int(request.POST.get('amount')) * 100
