@@ -63,16 +63,13 @@ def stripe_webhook(request):
     stripe.api_key = config('STRIPE_SECRET_KEY')
     time.sleep(15)
     payload = request.body
-    # signature_header = request.META['HTTP_STRIPE_SIGNATURE']
+    signature_header = request.META['HTTP_STRIPE_SIGNATURE']
     event = None
 
     try:
-        event = stripe.Event.construct_from(
-            json.loads(payload), stripe.api_key
-        )
-        # event = stripe.Webhook.construct_event(
-		# 	payload, signature_header, config('STRIPE_WEBHOOK_SECRET_TEST')
-		# )
+        event = stripe.Webhook.construct_event(
+			payload, signature_header, config('STRIPE_WEBHOOK_SECRET_TEST')
+		)
     except ValueError as e:
         # Invalid payload
         return HttpResponse(status=400)
