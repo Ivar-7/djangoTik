@@ -3,11 +3,20 @@
   <script defer src="https://use.fontawesome.com/releases/v6.4.0/js/all.js"></script>
   <script src="https://js.stripe.com/v3/"></script>
 
-  <section class="section">
-    <div class="container">
-      <button class="button is-primary" id="submitBtn">Purchase!</button>
+  <form method="post" class="mt-4">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="productName">Name:</label>
+      <input type="text" id="productName" name="productName" class="form-control" required>
     </div>
-  </section>
+    <div class="form-group">
+        <label for="amount">Amount:</label>
+        <input type="text" id="amount" name="amount" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <button class="button btn-primary" id="submitBtn">Purchase!</button>
+  </form>
+  
 
   <script>
     console.log("Sanity check!");
