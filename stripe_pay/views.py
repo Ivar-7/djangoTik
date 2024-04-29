@@ -1,4 +1,5 @@
-from django.http import JsonResponse
+import json
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views import View
 from decouple import config
@@ -54,3 +55,41 @@ def success(request):
 
 def cancelled(request):
     return render(request, 'stripe_pay/cancelled.html')
+
+# @csrf_exempt
+# def stripe_webhook(request):
+#     payload = request.body
+#     event = None
+
+#     try:
+#         event = stripe.Event.construct_from(
+#             json.loads(payload), stripe.api_key
+#         )
+#     except ValueError as e:
+#         # Invalid payload
+#         return HttpResponse(status=400)
+
+#     # Handle the checkout.session.completed event
+#     if event['type'] == 'checkout.session.completed':
+#         session = event['data']['object']
+ 
+#     return HttpResponse(status=200)
+
+@csrf_exempt
+def stripe_webhook(request):
+	stripe.api_key = config('STRIPE_SECRET_KEY')
+	payload = request.body
+	signature_header = request.META['HTTP_STRIPE_SIGNATURE']
+	event = None
+	try:
+		event = stripe.Webhook.construct_event(
+			payload, signature_header, config('STRIPE_WEBHOOK_SECRET_TEST')
+		)
+	except ValueError as e:
+		return HttpResponse(status=400)
+	except stripe.error.SignatureVerificationError as e:
+		return HttpResponse(status=400)
+	if event['type'] == 'checkout.session.completed':
+		session = event['data']['object']
+		print(session)
+	return HttpResponse(status=200)
