@@ -57,10 +57,15 @@ def mpesa_payment(request):
 
         url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"  # C2B URL
 
-        response = requests.post(url, json=payload, headers=headers)
-        print(response.text)
-        return HttpResponse('<h3>Please Complete Payment in Your Phone and we will deliver in minutes</h3>'
-                            '<a href="/" class="btn btn-dark btn-sm">Back Home</a>')
+        try:
+            response = requests.post(url, json=payload, headers=headers)
+            response_data = response.json()
+            print(response_data)
+            return render(request, 'mpesa/mpesa_payment_form.html', {'response': response_data})
+        except KeyError as e:
+            return HttpResponse(f"Error: Key '{e}' not found in the response.")
+        except Exception as e:
+            return HttpResponse(f"An error occurred: {str(e)}")
     else:
         # Handle GET requests
         # Render a form or any other content you want to display for GET requests

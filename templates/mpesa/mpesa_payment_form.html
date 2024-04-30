@@ -20,4 +20,14 @@
         </div>
     </div>
 </div>
+
+{% if response %}
+    {% if response.ResponseCode == '0' %}
+        <h2 class="mt-4">Transaction Successful. Kindly finish transaction at you phone</h2>
+    {% else %}
+        <h2 class="mt-4">Transaction Failed</h2>
+        <p>{{ response.errorMessage }}</p>
+    {% endif %}
+{% endif %}
+
 {% endblock %}
