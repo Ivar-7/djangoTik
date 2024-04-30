@@ -58,18 +58,34 @@ def success(request):
 def cancelled(request):
     return render(request, 'stripe_pay/cancelled.html')
 
+def create_stripe_transaction(session):
+    product_name = session.get('display_items', [{}])[0].get('custom', {}).get('product_name')
+    amount_subtotal = session.get('amount_subtotal')
+    amount_total = session.get('amount_total')
+    currency = session.get('currency')
+    customer_email = session.get('customer_details', {}).get('email')
+    payment_status = session.get('payment_status')
+
+    StripeTransaction.objects.create(
+        product_name=product_name,
+        amount_subtotal=amount_subtotal / 100 if amount_subtotal else None,  # Convert to dollars
+        amount_total=amount_total / 100 if amount_total else None,  # Convert to dollars
+        currency=currency,
+        customer_email=customer_email,
+        payment_status=payment_status
+    )
+
 @csrf_exempt
 def stripe_webhook(request):
     stripe.api_key = config('STRIPE_SECRET_KEY')
-    time.sleep(15)
     payload = request.body
     signature_header = request.META['HTTP_STRIPE_SIGNATURE']
     event = None
 
     try:
         event = stripe.Webhook.construct_event(
-			payload, signature_header, config('STRIPE_WEBHOOK_SECRET_TEST')
-		)
+            payload, signature_header, config('STRIPE_WEBHOOK_SECRET_TEST')
+        )
     except ValueError as e:
         # Invalid payload
         return HttpResponse(status=400)
@@ -77,11 +93,7 @@ def stripe_webhook(request):
     # Handle the checkout.session.completed event
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
-        print(session)
-        time.sleep(15)
-        StripeTransaction.objects.create(
-            product_name=session['display_items'][0]['custom']['product_name'],
-            amount=session['display_items'][0]['amount']
-        )
- 
+        print("Session: ", session)
+        create_stripe_transaction(session)
+    
     return HttpResponse(status=200)
