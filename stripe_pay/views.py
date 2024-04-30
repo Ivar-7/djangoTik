@@ -65,6 +65,11 @@ def create_stripe_transaction(session):
     currency = session.get('currency')
     customer_email = session.get('customer_details', {}).get('email')
     payment_status = session.get('payment_status')
+    country = session.get('customer_details', {}).get('address', {}).get('country')
+    payment_id = session.get('id')
+    customer_name = session.get('customer_details', {}).get('name')
+    payment_intent = session.get('payment_intent')
+    status = session.get('status')
 
     StripeTransaction.objects.create(
         product_name=product_name,
@@ -72,7 +77,12 @@ def create_stripe_transaction(session):
         amount_total=amount_total / 100 if amount_total else None,  # Convert to dollars
         currency=currency,
         customer_email=customer_email,
-        payment_status=payment_status
+        payment_status=payment_status,
+        country=country,
+        payment_id=payment_id,
+        customer_name=customer_name,
+        payment_intent=payment_intent,
+        status=status
     )
 
 @csrf_exempt
