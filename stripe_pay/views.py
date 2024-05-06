@@ -88,14 +88,14 @@ def create_stripe_transaction(session):
 @csrf_exempt
 def stripe_webhook(request):
     stripe.api_key = config('STRIPE_SECRET_KEY')
-    payload = request.body.decode('utf-8')  # Ensure payload is a string
-    # signature_header = request.META['HTTP_STRIPE_SIGNATURE']
-    signature_header = config('STRIPE_SIGNING_SECRET')
+    payload = request.body
+    signature_header = request.META['HTTP_STRIPE_SIGNATURE']
+    # signature_header = config('STRIPE_SIGNING_SECRET')
     event = None
 
     try:
         event = stripe.Webhook.construct_event(
-            payload, signature_header, config('STRIPE_WEBHOOK_SECRET_TEST')
+            payload, signature_header, config('STRIPE_WEBHOOK_SECRET')
         )
     except ValueError as e:
         # Invalid payload
