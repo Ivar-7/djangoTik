@@ -103,7 +103,7 @@ def stripe_webhook(request):
     # Handle the checkout.session.completed event
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
-        print("Session: ", session)
+        # print("Session: ", session)
         create_stripe_transaction(session)
     
     return HttpResponse(status=200)
