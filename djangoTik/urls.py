@@ -17,13 +17,18 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 
+def trigger_error(request):
+    division_by_zero = 1 / 0
+
+
 urlpatterns = [
     path('', TemplateView.as_view(template_name='base.html'), name='home'),
     path('admin/', admin.site.urls),
     path('mpesa/', include('mpesa.urls')),
     path('mtnmo/', include('mtnmo.urls')),
-    path('paystack/', include('paystack.urls')),
+    # path('paystack/', include('paystack.urls')),
     path('stripe-pay/', include('stripe_pay.urls')),
+    path('sentry-debug/', trigger_error),
 
     path('<path:path>', TemplateView.as_view(template_name='404.html'), name='catch_all_404'),
 ]
