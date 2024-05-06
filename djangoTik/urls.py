@@ -26,7 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('mpesa/', include('mpesa.urls')),
     path('mtnmo/', include('mtnmo.urls')),
-    path('paystack/', include('paystack.urls')),
+    # path('paystack/', include('paystack.urls')),
     path('stripe-pay/', include('stripe_pay.urls')),
     path('sentry-debug/', trigger_error),
 
