@@ -88,7 +88,7 @@ def create_stripe_transaction(session):
 @csrf_exempt
 def stripe_webhook(request):
     stripe.api_key = config('STRIPE_SECRET_KEY')
-    payload = request.body
+    payload = request.body.decode('utf-8')  # Ensure payload is a string
     signature_header = request.META['HTTP_STRIPE_SIGNATURE']
     event = None
 
