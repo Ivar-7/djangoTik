@@ -89,7 +89,8 @@ def create_stripe_transaction(session):
 def stripe_webhook(request):
     stripe.api_key = config('STRIPE_SECRET_KEY')
     payload = request.body.decode('utf-8')  # Ensure payload is a string
-    signature_header = request.META['HTTP_STRIPE_SIGNATURE']
+    # signature_header = request.META['HTTP_STRIPE_SIGNATURE']
+    signature_header = config('STRIPE_SIGNING_SECRET')
     event = None
 
     try:
