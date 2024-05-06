@@ -90,7 +90,6 @@ def stripe_webhook(request):
     stripe.api_key = config('STRIPE_SECRET_KEY')
     payload = request.body
     signature_header = request.META['HTTP_STRIPE_SIGNATURE']
-    # signature_header = config('STRIPE_SIGNING_SECRET')
     event = None
 
     try:
