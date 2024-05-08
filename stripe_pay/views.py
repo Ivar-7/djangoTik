@@ -26,6 +26,7 @@ def create_checkout_session(request):
         stripe.api_key = config('STRIPE_SECRET_KEY')
         product_name = request.POST.get('productName')
         amount = int(request.POST.get('amount')) * 100
+        quantity = int(request.POST.get('quantity'))
         try:
             checkout_session = stripe.checkout.Session.create(
                 # success_url=domain_url + 'success?session_id={CHECKOUT_SESSION_ID}',
@@ -42,7 +43,7 @@ def create_checkout_session(request):
                             },
                             'unit_amount': amount,
                         },
-                        'quantity': 1,
+                        'quantity': quantity,
                     }
                 ]
             )

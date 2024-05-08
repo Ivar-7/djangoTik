@@ -13,6 +13,10 @@
         <label for="amount">Amount:</label>
         <input type="text" id="amount" name="amount" class="form-control" required>
     </div>
+    <div class="form-group">
+        <label for="quantity">Quantity:</label>
+        <input type="text" id="quantity" name="quantity" class="form-control" required>
+    </div>
     <button class="button btn-primary" id="submitBtn" type="submit">Purchase!</button>
   </form>
   
@@ -21,7 +25,7 @@
     console.log("Sanity check!");
 
     // Get Stripe publishable key
-    fetch("https://teeket-payments-e225a1f9edcf.herokuapp.com/stripe-pay/config/")
+    fetch("/stripe-pay/config/")
     .then((result) => { return result.json(); })
     .then((data) => {
       // Initialize Stripe.js
@@ -31,10 +35,11 @@
         event.preventDefault();
         let productName = document.getElementById('productName').value;
         let amount = document.getElementById('amount').value;
+        let quantity = document.getElementById('quantity').value;
         let csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
         // Get Checkout Session ID
-        fetch(`https://teeket-payments-e225a1f9edcf.herokuapp.com/stripe-pay/create-checkout-session/`, {
+        fetch(`/stripe-pay/create-checkout-session/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -42,7 +47,8 @@
           },
           body: new URLSearchParams({
             'productName': productName,
-            'amount': amount
+            'amount': amount,
+            'quantity': quantity
           })
         })
         .then((result) => { return result.json(); })
