@@ -19,7 +19,7 @@ def stripe_config(request):
         stripe_config = {'publicKey': config('STRIPE_PUBLISHABLE_KEY')}
         return JsonResponse(stripe_config, safe=False)
 
-# @csrf_exempt
+@csrf_exempt
 def create_checkout_session(request):
     if request.method == 'POST':
         domain_url = config('STRIPE_DOMAIN_URL')
