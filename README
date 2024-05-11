@@ -1,36 +1,27 @@
-# Welcome to Teeket's payments infrastructure
+To use a WebView in Flutter to handle the redirection to Stripe Checkout, you can utilize the `webview_flutter` package. Here's how you can integrate it into the previous code:
 
-import 'dart:convert';
+First, add the `webview_flutter` package to your `pubspec.yaml` file:
 
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  webview_flutter: ^2.0.13
+```
 
-class StripePaymentPage extends StatefulWidget {
-  @override
-  _StripePaymentPageState createState() => _StripePaymentPageState();
-}
+Then, run `flutter pub get` to install the package.
+
+Next, modify the `_submitForm` method to load the Stripe Checkout URL in a WebView:
+
+```dart
+import 'package:webview_flutter/webview_flutter.dart';
 
 class _StripePaymentPageState extends State<StripePaymentPage> {
-  TextEditingController productNameController = TextEditingController();
-  TextEditingController amountController = TextEditingController();
-  TextEditingController quantityController = TextEditingController();
+  final GlobalKey<WebViewContainerState> webViewKey = GlobalKey();
 
   Future<void> _submitForm() async {
-    // Get CSRF token
-    var csrfToken = "your_csrf_token_here";
-
-    // Get product name, amount, and quantity
-    var productName = productNameController.text;
-    var amount = amountController.text;
-    var quantity = quantityController.text;
-
-    // Fetch Stripe publishable key
-    var response = await http.get(Uri.parse("/stripe-pay/config/"));
-    var data = jsonDecode(response.body);
-    var publicKey = data["publicKey"];
-
-    // Initialize Stripe.js (not needed in Flutter)
-
+    // Your existing code here to get data and CSRF token
+    
     // Get Checkout Session ID
     response = await http.post(
       Uri.parse("/stripe-pay/create-checkout-session/"),
@@ -47,7 +38,9 @@ class _StripePaymentPageState extends State<StripePaymentPage> {
     data = jsonDecode(response.body);
     var sessionId = data["sessionId"];
 
-    // Redirect to Stripe Checkout (not possible in Flutter, would need to use WebView)
+    // Load Stripe Checkout URL in WebView
+    var checkoutUrl = 'https://checkout.stripe.com/pay/$sessionId';
+    webViewKey.currentState.loadUrl(checkoutUrl);
   }
 
   @override
@@ -56,49 +49,44 @@ class _StripePaymentPageState extends State<StripePaymentPage> {
       appBar: AppBar(
         title: Text('Stripe Payment'),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextFormField(
-              controller: productNameController,
-              decoration: InputDecoration(labelText: 'Name'),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Please enter product name';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: amountController,
-              decoration: InputDecoration(labelText: 'Amount'),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Please enter amount';
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: quantityController,
-              decoration: InputDecoration(labelText: 'Quantity'),
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Please enter quantity';
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: _submitForm,
-              child: Text('Purchase!'),
-            ),
-          ],
-        ),
+      body: WebViewContainer(
+        key: webViewKey,
       ),
     );
   }
 }
+
+class WebViewContainer extends StatefulWidget {
+  final Key key;
+
+  WebViewContainer({this.key}) : super(key: key);
+
+  @override
+  WebViewContainerState createState() => WebViewContainerState();
+}
+
+class WebViewContainerState extends State<WebViewContainer> {
+  @override
+  Widget build(BuildContext context) {
+    return WebView(
+      initialUrl: 'about:blank',
+      javascriptMode: JavascriptMode.unrestricted,
+    );
+  }
+
+  void loadUrl(String url) {
+    if (mounted) {
+      setState(() {
+        webView.loadUrl(url);
+      });
+    }
+  }
+}
+```
+
+In this code:
+
+- We've added the `webview_flutter` package to handle web views.
+- We created a `WebViewContainer` widget to contain the WebView.
+- When the form is submitted, we load the Stripe Checkout URL obtained from the backend into the WebView.
+- Ensure that you have proper error handling, loading indicators, and back navigation handling in your WebView for a better user experience.
