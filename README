@@ -1,3 +1,104 @@
 # Welcome to Teeket's payments infrastructure
 
-1. Make a .env with all necessary configs
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+class StripePaymentPage extends StatefulWidget {
+  @override
+  _StripePaymentPageState createState() => _StripePaymentPageState();
+}
+
+class _StripePaymentPageState extends State<StripePaymentPage> {
+  TextEditingController productNameController = TextEditingController();
+  TextEditingController amountController = TextEditingController();
+  TextEditingController quantityController = TextEditingController();
+
+  Future<void> _submitForm() async {
+    // Get CSRF token
+    var csrfToken = "your_csrf_token_here";
+
+    // Get product name, amount, and quantity
+    var productName = productNameController.text;
+    var amount = amountController.text;
+    var quantity = quantityController.text;
+
+    // Fetch Stripe publishable key
+    var response = await http.get(Uri.parse("/stripe-pay/config/"));
+    var data = jsonDecode(response.body);
+    var publicKey = data["publicKey"];
+
+    // Initialize Stripe.js (not needed in Flutter)
+
+    // Get Checkout Session ID
+    response = await http.post(
+      Uri.parse("/stripe-pay/create-checkout-session/"),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': csrfToken,
+      },
+      body: {
+        'productName': productName,
+        'amount': amount,
+        'quantity': quantity,
+      },
+    );
+    data = jsonDecode(response.body);
+    var sessionId = data["sessionId"];
+
+    // Redirect to Stripe Checkout (not possible in Flutter, would need to use WebView)
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Stripe Payment'),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextFormField(
+              controller: productNameController,
+              decoration: InputDecoration(labelText: 'Name'),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Please enter product name';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: amountController,
+              decoration: InputDecoration(labelText: 'Amount'),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Please enter amount';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: quantityController,
+              decoration: InputDecoration(labelText: 'Quantity'),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Please enter quantity';
+                }
+                return null;
+              },
+            ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: _submitForm,
+              child: Text('Purchase!'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
