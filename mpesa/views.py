@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from requests.auth import HTTPBasicAuth
+from django.views.decorators.csrf import csrf_exempt
 import requests
 import datetime
 import base64
+from requests.auth import HTTPBasicAuth
 from decouple import config
 import json
-from django.views.decorators.csrf import csrf_exempt
 from .models import MpesaTransaction
 
 def index(request):
