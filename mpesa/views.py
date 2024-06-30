@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from requests.auth import HTTPBasicAuth
 import requests
 import datetime
