@@ -2,12 +2,13 @@ from django.shortcuts import render
 from .collection import Collection
 from .disbursement import Disbursement
 from .models import CollectionTransaction, DisbursementTransaction
-from django.http import HttpResponse
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 
 def index(request):
     return render(request, 'mtnmo/mtnmo.html')
-
 
 def store_collection(status_response):
     transaction = CollectionTransaction(
@@ -39,39 +40,43 @@ def store_disbursement(response_data):
     )
     disbursement.save()
 
+@csrf_exempt
 def collection(request):
     if request.method == 'POST':
         coll = Collection()
-        amount = request.POST.get('amount')
-        phone_number = request.POST.get('phone_number')
+        data = json.loads(request.body)
+        amount = data.get('amount')
+        phone_number = data.get('phone_number')
         try:
             response = coll.requestToPay(
                 amount, phone_number, external_id="123456789")
             status_response = coll.getTransactionStatus(response['ref'])
             store_collection(status_response)
-            return render(request, 'mtnmo/pay.html', {"response": response})
+            return JsonResponse({"status": "success", "response": response})
         except KeyError as e:
-            return HttpResponse(f"Error: Key '{e}' not found in the response.")
+            return JsonResponse({"status": "error", "message": f"Key '{e}' not found in the response."})
         except Exception as e:
-            return HttpResponse(f"An error occurred: {str(e)}")
-    return render(request, 'mtnmo/pay.html')
+            return JsonResponse({"status": "error", "message": str(e)})
+    return JsonResponse({"status": "error", "message": "Invalid request method."})
 
+@csrf_exempt
 def disbursement(request):
     if request.method == 'POST':
         disbur = Disbursement()
-        amount = request.POST.get('amount')
-        phone_number = request.POST.get('phone_number')
-        external_id = request.POST.get('external_id')
-        payermessage = request.POST.get('payermessage')
+        data = json.loads(request.body)
+        amount = data.get('amount')
+        phone_number = data.get('phone_number')
+        external_id = data.get('external_id')
+        payermessage = data.get('payermessage')
 
         try:
             result = disbur.transfer(
                 amount, phone_number, external_id, payermessage)
             transfer_status_res = disbur.getTransactionStatus(result['ref'])
             store_disbursement(transfer_status_res)
-            return render(request, 'mtnmo/disbursement.html', {"result": result})
+            return JsonResponse({"status": "success", "result": result})
         except KeyError as e:
-            return HttpResponse(f"Error: Key '{e}' not found in the response.")
+            return JsonResponse({"status": "error", "message": f"Key '{e}' not found in the response."})
         except Exception as e:
-            return HttpResponse(f"An error occurred: {str(e)}")
-    return render(request, 'mtnmo/disbursement.html')
+            return JsonResponse({"status": "error", "message": str(e)})
+    return JsonResponse({"status": "error", "message": "Invalid request method."})
