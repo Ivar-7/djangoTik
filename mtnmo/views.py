@@ -6,6 +6,10 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 
+
+def index(request):
+    return render(request, 'mtnmo/mtnmo.html')
+
 def store_collection(status_response):
     transaction = CollectionTransaction(
         financial_transaction_id=status_response['financialTransactionId'],
